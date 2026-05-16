@@ -77,42 +77,107 @@ Supports:
 
 ---
 
-# API Endpoints
+# Project Structure
 
-## Health Check
+```text
+.
+├── main.py
+├── catalog.py
+├── requirements.txt
+├── render.yaml
+├── README.md
+└── test_agent.py
+Local Setup
+Clone Repository
+git clone https://github.com/sandipanb01/shl-main.git
+cd shl-main
+Create Virtual Environment
+Windows
+python -m venv venv
+venv\Scripts\activate
+Linux / Mac
+python3 -m venv venv
+source venv/bin/activate
+Install Dependencies
+pip install -r requirements.txt
+Running the API
+Start FastAPI Server
+uvicorn main:app --reload
 
-```bash
-GET /health
+You should see something like:
 
-Response:
+INFO:     Uvicorn running on http://127.0.0.1:8000
+Swagger API Docs
+
+Once the server starts:
+
+http://127.0.0.1:8000/docs
+Health Check
+Browser
+
+Open:
+
+http://127.0.0.1:8000/health
+
+Expected Response:
 
 {
   "status": "ok"
 }
+Curl Command
+curl -X GET "http://127.0.0.1:8000/health"
 Chat Endpoint
-POST /chat
-
-Example Request:
-
+Curl Example
+curl -X POST "http://127.0.0.1:8000/chat" ^
+-H "Content-Type: application/json" ^
+-d "{\"messages\":[{\"role\":\"user\",\"content\":\"Hiring a Java backend engineer with communication skills\"}]}"
+Example Request
 {
   "messages": [
     {
       "role": "user",
-      "content": "Hiring a backend engineer with strong communication skills."
+      "content": "Hiring a Java backend engineer with communication skills"
     }
   ]
 }
-
-Example Response:
-
+Example Response
 {
-  "reply": "Here’s a shortlist of suitable SHL assessments.",
+  "reply": "Here’s a shortlist of SHL assessments.",
   "recommendations": [
     {
       "name": "Java 8 (New)",
-      "url": "https://www.shl.com/",
+      "url": "https://www.shl.com/solutions/products/product-catalog/view/java-8-new/",
       "test_type": "K"
     }
   ],
   "end_of_conversation": false
 }
+Example Multi-Turn Conversation
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hiring a mid-level Java developer."
+    },
+    {
+      "role": "assistant",
+      "content": "Any constraints?"
+    },
+    {
+      "role": "user",
+      "content": "Under 30 minutes and focus on teamwork."
+    }
+  ]
+}
+Deployment
+
+Successfully deployable on:
+
+Render
+Railway
+Replit
+VPS environments
+
+Recommended start command:
+
+uvicorn main:app --host 0.0.0.0 --port $PORT

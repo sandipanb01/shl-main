@@ -625,6 +625,13 @@ def _clarifying_question(messages: List[Message]) -> str:
 
 
 # ── Endpoints ──────────────────────────────────────────────────────────────────
+@app.get("/")
+async def root():
+    return {
+        "message": "SHL Assessment Recommender API is running.",
+        "docs": "/docs",
+        "health": "/health"
+    }
 @app.get("/health")
 async def health():
     return {"status": "ok"}

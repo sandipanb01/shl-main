@@ -1,0 +1,9 @@
+# Only track what we explicitly add
+*
+
+# But allow these two files
+!main.py
+!README.md
+
+# Also allow these so git can store metadata
+!.gitignore

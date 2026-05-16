@@ -1,9 +1,15 @@
-# Only track what we explicitly add
-*
+# Virtual environment
+venv/
 
-# But allow these two files
-!main.py
-!README.md
+# Python cache
+__pycache__/
+*.pyc
 
-# Also allow these so git can store metadata
-!.gitignore
+# Secrets
+GEMINI_KEY.txt
+.env
+
+# Ignore backup files only
+main.py.BACKUP_before_replace.py
+main.py.bak
+main.py.bak_jsonfix

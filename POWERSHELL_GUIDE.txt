@@ -1,0 +1,453 @@
+# 🚀 COMPLETE BABY-STEPS GUIDE — SHL Recommender on D: Drive
+# Using FREE Google Gemini API (no credit card ever needed)
+
+===========================================================
+  READ THIS WHOLE SECTION BEFORE OPENING POWERSHELL
+===========================================================
+
+Files you downloaded in the ZIP:
+  catalog.py        ← all SHL assessments data
+  main.py           ← the FastAPI web server
+  requirements.txt  ← Python packages list
+  test_agent.py     ← test script
+  approach.md       ← document to submit to SHL
+  render.yaml       ← deployment config
+
+===========================================================
+PHASE 1 — ONE-TIME SETUP (do this once, never again)
+===========================================================
+
+─────────────────────────────────────────
+STEP 1 ▶ Install Python 3.11
+─────────────────────────────────────────
+1. Open your browser
+2. Go to:  https://www.python.org/downloads/
+3. Click the big yellow "Download Python 3.11.x" button
+4. Run the downloaded file (python-3.11.x-amd64.exe)
+5. ⚠️ ON THE FIRST SCREEN: tick the box "Add Python to PATH"
+   (this is the most important step — don't skip it!)
+6. Click "Install Now"
+7. Wait for it to finish, then click Close
+
+─────────────────────────────────────────
+STEP 2 ▶ Install Git
+─────────────────────────────────────────
+1. Go to:  https://git-scm.com/download/win
+2. The download starts automatically
+3. Run the installer
+4. Just click Next → Next → Next → Install (all defaults are fine)
+5. Click Finish
+
+─────────────────────────────────────────
+STEP 3 ▶ Get FREE Google Gemini API Key
+─────────────────────────────────────────
+1. Go to:  https://aistudio.google.com/app/apikey
+2. Sign in with ANY Google/Gmail account (totally free)
+3. Click "Create API Key"
+4. Click "Create API key in new project"
+5. Copy the key — it looks like:  AIzaSy......................
+6. Save it in Notepad right now — you'll need it in Phase 2!
+
+   ⚠️ IMPORTANT: This is 100% FREE — no credit card, no billing.
+   Free tier gives you 15 requests/minute and 1500/day — more than enough.
+
+===========================================================
+PHASE 2 — OPEN POWERSHELL & SETUP PROJECT
+===========================================================
+
+─────────────────────────────────────────
+STEP 4 ▶ Open PowerShell as Administrator
+─────────────────────────────────────────
+1. Press the Windows key on your keyboard
+2. Type:  PowerShell
+3. You'll see "Windows PowerShell" appear
+4. RIGHT-CLICK on it
+5. Click "Run as administrator"
+6. Click "Yes" on the popup
+
+─────────────────────────────────────────
+STEP 5 ▶ Allow scripts (one-time fix)
+─────────────────────────────────────────
+Type this EXACTLY and press Enter:
+
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+When it asks you to confirm, type:  Y
+Then press Enter
+
+─────────────────────────────────────────
+STEP 6 ▶ Go to D: drive
+─────────────────────────────────────────
+Type this and press Enter:
+
+D:
+
+Your prompt should now show  D:\>
+
+─────────────────────────────────────────
+STEP 7 ▶ Create project folder on D: drive
+─────────────────────────────────────────
+Type this and press Enter:
+
+New-Item -ItemType Directory -Path "D:\shl_project"
+
+Then type this and press Enter:
+
+cd D:\shl_project
+
+─────────────────────────────────────────
+STEP 8 ▶ Find and move your downloaded ZIP
+─────────────────────────────────────────
+First, let's find your ZIP file. Type this and press Enter:
+
+dir "$env:USERPROFILE\Downloads\*.zip"
+
+You'll see a list of zip files. Find the one that says shl or shl_recommender.
+
+Now copy it to your project folder (replace THE_FILENAME with what you saw above):
+
+Copy-Item "$env:USERPROFILE\Downloads\THE_FILENAME.zip" -Destination "D:\shl_project\"
+
+EXAMPLE (if your file is called shl_recommender.zip):
+Copy-Item "$env:USERPROFILE\Downloads\shl_recommender.zip" -Destination "D:\shl_project\"
+
+─────────────────────────────────────────
+STEP 9 ▶ Unzip the file
+─────────────────────────────────────────
+Type this (replace THE_FILENAME with your actual zip filename):
+
+Expand-Archive -Path "D:\shl_project\THE_FILENAME.zip" -DestinationPath "D:\shl_project\" -Force
+
+EXAMPLE:
+Expand-Archive -Path "D:\shl_project\shl_recommender.zip" -DestinationPath "D:\shl_project\" -Force
+
+─────────────────────────────────────────
+STEP 10 ▶ Find where main.py is
+─────────────────────────────────────────
+Type this and press Enter:
+
+dir D:\shl_project /s /b | findstr main.py
+
+This shows you the FULL PATH to main.py.
+
+Examples of what you might see:
+  D:\shl_project\main.py              (files are directly there)
+  D:\shl_project\shl_recommender\main.py  (files are in a subfolder)
+
+─────────────────────────────────────────
+STEP 11 ▶ Go into the folder that has main.py
+─────────────────────────────────────────
+If main.py is directly in D:\shl_project, type:
+
+cd D:\shl_project
+
+If main.py is in a subfolder (e.g. shl_recommender), type:
+
+cd D:\shl_project\shl_recommender
+
+Now verify you're in the right place:
+
+dir
+
+You should see: catalog.py, main.py, requirements.txt, test_agent.py
+
+─────────────────────────────────────────
+STEP 12 ▶ Verify Python is working
+─────────────────────────────────────────
+Type this and press Enter:
+
+python --version
+
+You should see:  Python 3.11.x
+
+If you see "not recognized", Python didn't install correctly.
+Solution: Reinstall Python (Step 1) and tick "Add Python to PATH"!
+
+─────────────────────────────────────────
+STEP 13 ▶ Create virtual environment on D: drive
+─────────────────────────────────────────
+Type this and press Enter:
+
+python -m venv D:\shl_project\venv
+
+Wait about 30 seconds for it to finish.
+
+─────────────────────────────────────────
+STEP 14 ▶ Activate the virtual environment
+─────────────────────────────────────────
+Type this and press Enter:
+
+D:\shl_project\venv\Scripts\Activate.ps1
+
+Your prompt should now start with:  (venv)
+
+Example:  (venv) PS D:\shl_project\shl_recommender>
+
+This means it's working! ✅
+
+─────────────────────────────────────────
+STEP 15 ▶ Install all required packages
+─────────────────────────────────────────
+Make sure you're in the folder with requirements.txt, then type:
+
+pip install -r requirements.txt
+
+This will download and install 5 packages.
+It takes about 2-3 minutes. Watch the text scroll — wait for it to finish completely.
+You'll see "Successfully installed ..." at the end.
+
+===========================================================
+PHASE 3 — RUN THE SERVER LOCALLY
+===========================================================
+
+─────────────────────────────────────────
+STEP 16 ▶ Set your FREE Gemini API key
+─────────────────────────────────────────
+Type this (paste YOUR actual key between the quotes):
+
+$env:GEMINI_API_KEY = "AIzaSy-PASTE-YOUR-KEY-HERE"
+
+EXAMPLE (not real — use yours):
+$env:GEMINI_API_KEY = "AIzaSyD4xK8mN2pQ7rL9vW3tJ6hY1bE5fC0aU8s"
+
+To double-check it was set, type:
+echo $env:GEMINI_API_KEY
+
+It should print your key back.
+
+─────────────────────────────────────────
+STEP 17 ▶ Start the server
+─────────────────────────────────────────
+Type this and press Enter:
+
+python main.py
+
+You should see output like:
+  INFO: TF-IDF index built over 68 assessments.
+  INFO: Uvicorn running on http://0.0.0.0:8000
+
+🔴 KEEP THIS POWERSHELL WINDOW OPEN — do NOT close it.
+The server only runs while this window is open.
+
+===========================================================
+PHASE 4 — TEST THE SERVER (NEW POWERSHELL WINDOW)
+===========================================================
+
+─────────────────────────────────────────
+STEP 18 ▶ Open a SECOND PowerShell window
+─────────────────────────────────────────
+1. Press Windows key
+2. Type: PowerShell
+3. Click it (normal click, no need for Admin this time)
+
+─────────────────────────────────────────
+STEP 19 ▶ Quick health test
+─────────────────────────────────────────
+In the NEW PowerShell window, type:
+
+Invoke-WebRequest -Uri "http://localhost:8000/health" | Select-Object -ExpandProperty Content
+
+Expected output:  {"status":"ok"}
+
+If you see that — your server is running perfectly! 🎉
+
+─────────────────────────────────────────
+STEP 20 ▶ Test the chat endpoint
+─────────────────────────────────────────
+Type this (all one block — copy-paste the whole thing):
+
+$body = '{"messages":[{"role":"user","content":"I am hiring a mid-level Java developer with 4 years experience who works with stakeholders"}]}'
+$r = Invoke-WebRequest -Uri "http://localhost:8000/chat" -Method POST -ContentType "application/json" -Body $body
+$r.Content | ConvertFrom-Json | ConvertTo-Json -Depth 5
+
+You should see a JSON response with:
+- "reply": a message asking for more info or giving recommendations
+- "recommendations": a list of SHL assessments (name, url, test_type)
+- "end_of_conversation": false or true
+
+─────────────────────────────────────────
+STEP 21 ▶ Run the full test suite
+─────────────────────────────────────────
+In your SECOND PowerShell window, navigate to your project folder and activate venv:
+
+cd D:\shl_project\shl_recommender
+D:\shl_project\venv\Scripts\Activate.ps1
+
+Then run the tests:
+
+python test_agent.py --url http://localhost:8000
+
+You should see lots of ✅ PASS lines ending with:
+  🎉 All tests passed — ready to submit!
+
+===========================================================
+PHASE 5 — DEPLOY TO INTERNET (FREE on Render.com)
+===========================================================
+
+─────────────────────────────────────────
+STEP 22 ▶ Create a GitHub account
+─────────────────────────────────────────
+1. Go to: https://github.com
+2. Click "Sign up"
+3. Follow the steps (it's free)
+
+─────────────────────────────────────────
+STEP 23 ▶ Create a new GitHub repository
+─────────────────────────────────────────
+1. Once logged in to GitHub, click the "+" button (top right)
+2. Click "New repository"
+3. Repository name: shl-recommender
+4. Select "Public"
+5. Do NOT tick any checkboxes (no README, no .gitignore)
+6. Click "Create repository"
+
+─────────────────────────────────────────
+STEP 24 ▶ Create a GitHub Personal Access Token
+─────────────────────────────────────────
+(GitHub no longer accepts passwords — you need a token instead)
+
+1. Go to: https://github.com/settings/tokens
+2. Click "Generate new token (classic)"
+3. Note: shl-project (or anything you like)
+4. Expiration: 30 days
+5. Check the box next to "repo" (just that one)
+6. Scroll down, click "Generate token"
+7. COPY THE TOKEN NOW — you won't see it again!
+   It looks like: ghp_xxxxxxxxxxxxxxxxxxxx
+8. Save it in Notepad
+
+─────────────────────────────────────────
+STEP 25 ▶ Push code to GitHub
+─────────────────────────────────────────
+In your PowerShell window (in the project folder, venv activated):
+
+git init
+git add .
+git commit -m "SHL Assessment Recommender"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/shl-recommender.git
+git push -u origin main
+
+Replace YOUR_USERNAME with your actual GitHub username.
+
+When it asks:
+  Username: type your GitHub username, press Enter
+  Password: PASTE YOUR TOKEN (the ghp_xxx... one), press Enter
+  (Note: the password won't show as you type — that's normal!)
+
+─────────────────────────────────────────
+STEP 26 ▶ Deploy on Render.com (FREE hosting)
+─────────────────────────────────────────
+1. Go to: https://render.com
+2. Click "Get Started for Free"
+3. Click "Sign in with GitHub" — authorize it
+4. Click "New +" button (top right)
+5. Click "Web Service"
+6. Under "Connect a repository", find "shl-recommender" and click "Connect"
+7. Fill in these fields:
+   Name:          shl-recommender
+   Region:        (leave as default)
+   Branch:        main
+   Runtime:       Python 3
+   Build Command: pip install -r requirements.txt
+   Start Command: uvicorn main:app --host 0.0.0.0 --port $PORT
+
+8. Scroll down to "Environment Variables"
+9. Click "Add Environment Variable"
+   Key:   GEMINI_API_KEY
+   Value: AIzaSy-YOUR-ACTUAL-KEY-HERE  (paste your Gemini key)
+
+10. Scroll to bottom, click "Create Web Service"
+
+Render will now build and deploy. This takes 3-5 minutes.
+Watch the logs — wait for "Your service is live 🎉"
+
+─────────────────────────────────────────
+STEP 27 ▶ Get your public URL
+─────────────────────────────────────────
+After deployment, your URL appears at the top of Render dashboard.
+It looks like:  https://shl-recommender-xxxx.onrender.com
+
+─────────────────────────────────────────
+STEP 28 ▶ Test your live deployment
+─────────────────────────────────────────
+In PowerShell (replace with YOUR actual Render URL):
+
+Invoke-WebRequest -Uri "https://shl-recommender-xxxx.onrender.com/health" | Select-Object -ExpandProperty Content
+
+Expected: {"status":"ok"}
+
+Also run the full test suite against live URL:
+
+python test_agent.py --url https://shl-recommender-xxxx.onrender.com
+
+All green? YOU'RE READY TO SUBMIT! 🎉
+
+===========================================================
+PHASE 6 — SUBMIT TO SHL
+===========================================================
+
+You need to submit:
+1. Your live API URL:  https://shl-recommender-xxxx.onrender.com
+2. The approach.md file (your 2-page design document)
+
+Fill in your name at the top of approach.md first!
+You can open it in Notepad:
+  notepad D:\shl_project\shl_recommender\approach.md
+
+===========================================================
+🆘 TROUBLESHOOTING — Common Errors & Fixes
+===========================================================
+
+ERROR: "Activate.ps1 cannot be loaded"
+FIX:
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Then try again.
+
+ERROR: "python is not recognized"
+FIX: Python isn't in PATH. Reinstall Python and tick "Add Python to PATH".
+
+ERROR: "pip is not recognized"
+FIX: Use this instead:
+python -m pip install -r requirements.txt
+
+ERROR: Port 8000 already in use
+FIX:
+$env:PORT = "8001"
+python main.py
+Then use http://localhost:8001 in tests.
+
+ERROR: "GEMINI_API_KEY not set" or API errors
+FIX: Make sure you set it BEFORE starting the server:
+$env:GEMINI_API_KEY = "AIzaSy..."
+python main.py
+
+ERROR: ZIP extracts to a nested folder
+FIX: Run this to find main.py:
+dir D:\shl_project /s /b | findstr main.py
+Then cd to that folder.
+
+ERROR: Render deployment fails
+FIX: Check Render's log tab. Most common:
+- Wrong start command → make sure it's: uvicorn main:app --host 0.0.0.0 --port $PORT
+- Missing GEMINI_API_KEY env var → add it in Render dashboard
+
+ERROR: Gemini returns 429 (rate limit)
+FIX: Free tier is 15 requests/minute. The code already handles this with a 5-second
+retry. If it persists, just wait 1 minute and try again.
+
+===========================================================
+⚡ QUICK REFERENCE — Commands You'll Use Most
+===========================================================
+
+Go to project folder:      cd D:\shl_project\shl_recommender
+Activate venv:             D:\shl_project\venv\Scripts\Activate.ps1
+Set API key:               $env:GEMINI_API_KEY = "AIzaSy..."
+Start server:              python main.py
+Health check (local):      Invoke-WebRequest -Uri "http://localhost:8000/health"
+Run tests (local):         python test_agent.py --url http://localhost:8000
+Run tests (live):          python test_agent.py --url https://YOUR-URL.onrender.com
+
+===========================================================
+Good luck! You've got this! 🍀
+===========================================================
